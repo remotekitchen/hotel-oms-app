@@ -1,10 +1,10 @@
-import { Image } from "expo-image";
-import { Platform, StyleSheet, Text } from "react-native";
-
 import { HelloWave } from "@/components/HelloWave";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { Image } from "expo-image";
+import { Platform, StyleSheet, Text, View } from "react-native";
+import "../../global.css";
 
 export default function HomeScreen() {
   return (
@@ -19,7 +19,11 @@ export default function HomeScreen() {
     >
       <ThemedView style={styles.titleContainer}>
         <ThemedText type="title">Welcome!</ThemedText>
-        <Text className="text-red-500 text-4xl">Hello Tailwind</Text>
+        <View className="flex-1 items-center justify-center bg-white">
+          <Text className="text-4xl font-bold text-red-500">
+            Welcome to Nativewind!
+          </Text>
+        </View>
         <HelloWave />
       </ThemedView>
       <ThemedView style={styles.stepContainer}>

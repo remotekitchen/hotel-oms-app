@@ -1,5 +1,8 @@
-import React, { useState } from "react";
+import * as Updates from "expo-updates";
+import React, { useCallback, useState } from "react";
 import {
+  Alert,
+  RefreshControl,
   ScrollView,
   Text,
   TextInput,
@@ -11,6 +14,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [refreshing, setRefreshing] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string }>(
     {}
   );
@@ -36,15 +40,32 @@ export default function LoginScreen() {
   const onSubmit = () => {
     if (validate()) {
       console.log("Login values:", { email, password });
-      // Perform login action here
+      // Perform login here
     }
   };
+
+  const onRefresh = useCallback(async () => {
+    try {
+      setRefreshing(true);
+      console.log("Refreshing... restarting app");
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // just a small delay for UI
+      await Updates.reloadAsync(); // restarts the app
+    } catch (err) {
+      console.warn("App restart failed:", err);
+      Alert.alert("Restart Failed", "Something went wrong. Please try again.");
+    } finally {
+      setRefreshing(false);
+    }
+  }, []);
 
   return (
     <SafeAreaView className="flex-1 bg-white">
       <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
         keyboardShouldPersistTaps="handled"
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       >
         <View className="flex-1 justify-center items-center py-10">
           <View className="w-full max-w-lg bg-white p-6 rounded-xl lg:shadow-lg lg:rounded-2xl lg:px-10 lg:py-8">

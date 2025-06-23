@@ -1,19 +1,17 @@
 import HomePage from "@/components/HomePage";
 import LoginScreen from "@/components/LoginScreen";
-import { useColorScheme } from "@/hooks/useColorScheme";
 import { selectToken } from "@/redux/feature/authentication/authenticationSlice";
 import { store } from "@/redux/store";
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
 import Toast from "react-native-toast-message";
 import { Provider, useSelector } from "react-redux";
+import { NativeBaseProvider, extendTheme } from "native-base";
 import "../global.css";
+
+// Optional: basic NativeBase theme (can remove or customize later)
+const theme = extendTheme({});
 
 function AuthGate() {
   const token = useSelector(selectToken);
@@ -21,7 +19,6 @@ function AuthGate() {
 }
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
@@ -32,15 +29,11 @@ export default function RootLayout() {
 
   return (
     <Provider store={store}>
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        {/* Ensure the StatusBar is shown and themed properly */}
-        <StatusBar
-          style={colorScheme === "dark" ? "dark" : "light"}
-          translucent
-        />
+      <NativeBaseProvider theme={theme}>
+        <StatusBar style="auto" translucent />
         <AuthGate />
         <Toast />
-      </ThemeProvider>
+      </NativeBaseProvider>
     </Provider>
   );
 }

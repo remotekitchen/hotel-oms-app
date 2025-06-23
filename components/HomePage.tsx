@@ -1,26 +1,25 @@
-import { userLoggedOut } from "@/redux/feature/authentication/authenticationSlice";
-import React from "react";
-import { Text, TouchableOpacity, View } from "react-native";
-import { useDispatch } from "react-redux";
+import React, { useState } from "react";
+import { View } from "react-native";
+import { ThemedView } from "./ThemedView";
+import { Header } from "./ui/Header";
+import { Sidebar } from "./ui/Sidebar";
 
 export default function HomePage() {
-  const dispatch = useDispatch();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const handleLogout = () => {
-    dispatch(userLoggedOut());
+  const handleToggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
+  const handleCloseSidebar = () => {
+    setIsSidebarOpen(false);
   };
 
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text style={{ fontSize: 24, marginBottom: 20 }}>
-        Welcome to HomePage!
-      </Text>
-      <TouchableOpacity
-        style={{ backgroundColor: "#f87171", padding: 16, borderRadius: 8 }}
-        onPress={handleLogout}
-      >
-        <Text style={{ color: "white", fontWeight: "bold" }}>Logout</Text>
-      </TouchableOpacity>
-    </View>
+    <ThemedView className="flex-1 bg-white">
+      <Header onMenuPress={handleToggleSidebar} />
+      <Sidebar isOpen={isSidebarOpen} onClose={handleCloseSidebar} />
+      <View className="flex-1 p-4">{/* Add your main content here */}</View>
+    </ThemedView>
   );
 }

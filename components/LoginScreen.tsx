@@ -1,3 +1,5 @@
+import { useLoginMutation } from "@/redux/feature/authentication/authenticationApi";
+import { userLoggedIn } from "@/redux/feature/authentication/authenticationSlice";
 import * as Updates from "expo-updates";
 import React, { useCallback, useState } from "react";
 import {
@@ -10,6 +12,8 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
+import { useDispatch } from "react-redux";
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
@@ -18,6 +22,9 @@ export default function LoginScreen() {
   const [errors, setErrors] = useState<{ email?: string; password?: string }>(
     {}
   );
+
+  const [login, { isLoading }] = useLoginMutation();
+  const dispatch = useDispatch();
 
   const validate = () => {
     const newErrors: { email?: string; password?: string } = {};
@@ -37,10 +44,22 @@ export default function LoginScreen() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     if (validate()) {
-      console.log("Login values:", { email, password });
-      // Perform login here
+      try {
+        const result = await login({ email, password }).unwrap();
+        console.log("Login Success:", JSON.stringify(result, null, 2));
+        dispatch(userLoggedIn({ token: result.token, user: result.user_info }));
+      } catch (error) {
+        // console.error("Login Failed:", error?.data?.non_field_errors);
+        Toast.show({
+          type: "error",
+          text1: "Login Failed",
+          //   @ts-ignore
+          text2: error?.data?.non_field_errors,
+          position: "bottom",
+        });
+      }
     }
   };
 
@@ -83,11 +102,11 @@ export default function LoginScreen() {
                 value={email}
                 onChangeText={setEmail}
               />
-              {errors.email && (
+              {errors.email ? (
                 <Text className="text-red-600 ml-1 text-sm">
                   {errors.email}
                 </Text>
-              )}
+              ) : null}
 
               <TextInput
                 className="w-full h-14 border border-gray-300 rounded-xl px-4 text-lg bg-white text-black"
@@ -97,18 +116,20 @@ export default function LoginScreen() {
                 value={password}
                 onChangeText={setPassword}
               />
-              {errors.password && (
+              {errors.password ? (
                 <Text className="text-red-600 ml-1 text-sm">
                   {errors.password}
                 </Text>
-              )}
+              ) : null}
             </View>
 
             <TouchableOpacity
               className="w-full h-14 bg-yellow-400 rounded-xl justify-center items-center"
               onPress={onSubmit}
             >
-              <Text className="text-neutral-900 text-lg font-bold">Login</Text>
+              <Text className="text-neutral-900 text-lg font-bold">
+                {isLoading ? "Loading..." : "Login"}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>

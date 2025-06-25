@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View } from "react-native";
+import { Text, View } from "react-native";
 import { ThemedView } from "./ThemedView";
 import { Header } from "./ui/Header";
 import { Sidebar } from "./ui/Sidebar";
@@ -19,7 +19,9 @@ export default function HomePage() {
     <ThemedView className="flex-1 bg-white">
       <Header onMenuPress={handleToggleSidebar} />
       <Sidebar isOpen={isSidebarOpen} onClose={handleCloseSidebar} />
-      <View className="flex-1 p-4">{/* Add your main content here */}</View>
+      <View className="flex-1 px-2">
+        <Text>Hello main component</Text>
+      </View>
     </ThemedView>
   );
 }

@@ -1,6 +1,14 @@
 import { userLoggedOut } from "@/redux/feature/authentication/authenticationSlice";
-import React from "react";
-import { SafeAreaView, Text, TouchableOpacity, View } from "react-native";
+import { ChevronDown } from "lucide-react-native"; // Lucide icon
+import React, { useState } from "react";
+import {
+  Platform,
+  SafeAreaView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import RNPickerSelect from "react-native-picker-select";
 import Animated, {
   useAnimatedStyle,
   withTiming,
@@ -42,6 +50,13 @@ const SIDEBAR_WIDTH = 300;
 
 export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const dispatch = useDispatch();
+  const [selectedHotel, setSelectedHotel] = useState("sohag");
+
+  const hotelOptions = [
+    { label: "Sohag Hotel", value: "sohag" },
+    { label: "Green Palace", value: "green_palace" },
+    { label: "Royal Inn", value: "royal_inn" },
+  ];
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
@@ -105,7 +120,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
         ]}
         className="pt-10 rounded-tr-3xl rounded-br-3xl"
       >
-        <View className="bg-blue-500 px-6 py-6 rounded-tr-3xl">
+        <View className="bg-blue-500 px-6 py-6">
           <Text className="text-2xl font-bold text-white mb-1">
             Hotel Management
           </Text>
@@ -116,9 +131,31 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
         <View className="px-6 py-4">
           <Text className="text-sm mb-2 text-black">Hotel Selection</Text>
-          <View className="flex-row justify-between items-center border border-gray-300 rounded-lg px-4 py-2">
-            <Text className="text-base text-black">sohag</Text>
-            <IconSymbol name="chevron.down" size={20} color="#000" />
+          <View className="border border-gray-300 rounded-lg px-3 py-2 bg-white">
+            <RNPickerSelect
+              onValueChange={(value) => setSelectedHotel(value)}
+              value={selectedHotel}
+              placeholder={{ label: "Select a hotel...", value: null }}
+              items={hotelOptions}
+              useNativeAndroidPickerStyle={false}
+              style={{
+                inputIOS: {
+                  fontSize: 16,
+                  color: "#000",
+                  paddingVertical: 8,
+                },
+                inputAndroid: {
+                  fontSize: 16,
+                  color: "#000",
+                  paddingVertical: 8,
+                },
+                iconContainer: {
+                  top: Platform.OS === "android" ? 12 : 10,
+                  right: 10,
+                },
+              }}
+              Icon={() => <ChevronDown size={20} color="#000" />}
+            />
           </View>
         </View>
 

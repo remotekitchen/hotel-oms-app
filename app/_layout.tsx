@@ -15,6 +15,7 @@ const theme = extendTheme({});
 
 function AuthGate() {
   const token = useSelector(selectToken);
+  console.log(token, "get-tokennnn");
   return token ? <HomePage /> : <LoginScreen />;
 }
 

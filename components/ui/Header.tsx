@@ -6,9 +6,10 @@ import { IconSymbol } from "./IconSymbol";
 
 interface HeaderProps {
   onMenuPress: () => void;
+  onCreateBookingPress: any;
 }
 
-export const Header = ({ onMenuPress }: HeaderProps) => {
+export const Header = ({ onMenuPress, onCreateBookingPress }: HeaderProps) => {
   return (
     <SafeAreaView className="bg-white">
       <View className="flex-row items-center justify-between px-4 py-3 border-b border-gray-200">
@@ -21,7 +22,10 @@ export const Header = ({ onMenuPress }: HeaderProps) => {
           </TouchableOpacity>
           <ThemedText className="text-xl font-bold text-black">Home</ThemedText>
         </View>
-        <TouchableOpacity className="bg-yellow-400 px-4 py-2 rounded-xl">
+        <TouchableOpacity
+          onPress={onCreateBookingPress}
+          className="bg-yellow-400 px-4 py-2 rounded-xl"
+        >
           <ThemedText className="text-sm font-bold text-black">
             Create Booking
           </ThemedText>

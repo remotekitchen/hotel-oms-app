@@ -12,20 +12,24 @@ import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
 export interface BookingData {
-  hotelName: string;
-  customerName: string;
-  roomType: string;
-  bookingNumber: string;
-  checkIn: string;
-  checkOut: string;
-  guests: {
-    adults: number;
-    children: number;
-  };
-  rooms: number;
-  totalPrice: string;
+  hotel_name: string; // This is consistent with your usage
+  customer_name: string;
+  room_type_name: string; // Correct the field name for room type
+  booking_number: string;
+  check_in_date: string;
+  check_out_date: string;
+  number_of_guests: number;
+  number_of_adults: number;
+  number_of_children: number;
+  number_of_rooms: number;
+  total_price: string;
   status: "confirmed" | "pending" | "cancelled";
-  payment: "pending" | "completed" | "failed";
+  payment_status: "pending" | "completed" | "failed";
+  guest?: {
+    first_name: string;
+    last_name: string;
+    email: string;
+  };
 }
 
 interface BookingCardProps {
@@ -69,7 +73,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
     <View className="mx-4 mb-4 bg-gray-100 rounded-2xl p-4 shadow-sm">
       {/* Hotel Name */}
       <Text className="text-2xl font-bold text-gray-900 mb-4">
-        Hotel: {booking.hotelName}
+        Hotel: {booking?.hotel_name}
       </Text>
 
       {/* Booking Details */}
@@ -81,7 +85,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
             <Text className="text-gray-700 font-medium">Customer Name</Text>
           </View>
           <Text className="text-gray-900 font-medium">
-            {booking.customerName}
+            {booking.guest?.first_name}
           </Text>
         </View>
 
@@ -91,7 +95,9 @@ export const BookingCard: React.FC<BookingCardProps> = ({
             <Building size={20} color="#6B7280" className="mr-3" />
             <Text className="text-gray-700 font-medium">Room Type</Text>
           </View>
-          <Text className="text-gray-900 font-medium">{booking.roomType}</Text>
+          <Text className="text-gray-900 font-medium">
+            {booking?.room_type_name}
+          </Text>
         </View>
 
         {/* Separator */}
@@ -104,7 +110,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
             <Text className="text-gray-700 font-medium">Booking Number</Text>
           </View>
           <Text className="text-gray-900 font-medium">
-            {booking.bookingNumber}
+            {booking.booking_number}
           </Text>
         </View>
 
@@ -114,7 +120,9 @@ export const BookingCard: React.FC<BookingCardProps> = ({
             <Calendar size={20} color="#6B7280" className="mr-3" />
             <Text className="text-gray-700 font-medium">Check-in</Text>
           </View>
-          <Text className="text-gray-900 font-medium">{booking.checkIn}</Text>
+          <Text className="text-gray-900 font-medium">
+            {booking.check_in_date}
+          </Text>
         </View>
 
         {/* Check-out */}
@@ -123,7 +131,9 @@ export const BookingCard: React.FC<BookingCardProps> = ({
             <Calendar size={20} color="#6B7280" className="mr-3" />
             <Text className="text-gray-700 font-medium">Check-out</Text>
           </View>
-          <Text className="text-gray-900 font-medium">{booking.checkOut}</Text>
+          <Text className="text-gray-900 font-medium">
+            {booking.check_out_date}
+          </Text>
         </View>
 
         {/* Guests */}
@@ -133,8 +143,8 @@ export const BookingCard: React.FC<BookingCardProps> = ({
             <Text className="text-gray-700 font-medium">Guests</Text>
           </View>
           <Text className="text-gray-900 font-medium">
-            {booking.guests.adults + booking.guests.children} (Adults:{" "}
-            {booking.guests.adults}, Children: {booking.guests.children})
+            {booking.number_of_guests} (Adults: {booking.number_of_adults},
+            Children: {booking.number_of_children})
           </Text>
         </View>
 
@@ -144,7 +154,9 @@ export const BookingCard: React.FC<BookingCardProps> = ({
             <Building size={20} color="#6B7280" className="mr-3" />
             <Text className="text-gray-700 font-medium">Rooms</Text>
           </View>
-          <Text className="text-gray-900 font-medium">{booking.rooms}</Text>
+          <Text className="text-gray-900 font-medium">
+            {booking.number_of_rooms}
+          </Text>
         </View>
 
         {/* Total Price */}
@@ -154,7 +166,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
             <Text className="text-gray-700 font-medium">Total Price</Text>
           </View>
           <Text className="text-gray-900 font-medium">
-            ৳{booking.totalPrice}
+            ৳{booking.total_price}
           </Text>
         </View>
 
@@ -175,8 +187,10 @@ export const BookingCard: React.FC<BookingCardProps> = ({
             <CreditCard size={20} color="#6B7280" className="mr-3" />
             <Text className="text-gray-700 font-medium">Payment</Text>
           </View>
-          <Text className={`font-medium ${getPaymentColor(booking.payment)}`}>
-            {booking.payment}
+          <Text
+            className={`font-medium ${getPaymentColor(booking.payment_status)}`}
+          >
+            {booking.payment_status}
           </Text>
         </View>
       </View>
@@ -188,7 +202,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
           className="flex-1 bg-red-500 rounded-2xl py-4 mr-2"
         >
           <Text className="text-white text-center font-semibold text-lg">
-            Mark No-Show
+            Hide Booking
           </Text>
         </TouchableOpacity>
 

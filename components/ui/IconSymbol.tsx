@@ -26,6 +26,8 @@ const MAPPING = {
   "clock.fill": "history",
   "info.circle.fill": "info",
   "arrow.left.circle.fill": "logout",
+  magnifyingglass: "search",
+  "exclamationmark.triangle": "warning",
 } as IconMapping;
 
 /**

@@ -1,3 +1,4 @@
+import { useAvailableRoomsQuery } from "@/redux/feature/hotel/hotelApi";
 import { ArrowLeft } from "lucide-react-native";
 import { AnimatePresence, MotiView } from "moti";
 import React from "react";
@@ -17,6 +18,8 @@ interface AvailableRoomsModalProps {
   data: AvailableRoomsData;
   checkInDate: string;
   checkOutDate: string;
+  selectedHotel: any;
+  setSelectedHotel: any;
 }
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
@@ -27,7 +30,20 @@ export const AvailableRoomsModal = ({
   data,
   checkInDate,
   checkOutDate,
+  selectedHotel,
+  setSelectedHotel,
 }: AvailableRoomsModalProps) => {
+  const {
+    data: availableHotels,
+    isLoading,
+    isError,
+    error,
+  } = useAvailableRoomsQuery({
+    hotelId: selectedHotel,
+    start_date: checkInDate,
+    end_date: checkOutDate,
+  });
+
   return (
     <AnimatePresence>
       {visible && (
@@ -70,21 +86,23 @@ export const AvailableRoomsModal = ({
               {/* Location Info */}
               <View className="px-4 py-6">
                 <Text className="text-2xl font-bold text-black mb-1">
-                  {data.location}
+                  {availableHotels?.hotel_name}
                 </Text>
                 <Text className="text-base text-gray-500 mb-4">
-                  {data.address}
+                  {availableHotels?.address
+                    ? availableHotels?.address
+                    : "Khulna"}
                 </Text>
-                <View className="h-px bg-gray-300 mb-6" />
+                <View className="h-px bg-gray-300" />
               </View>
 
               {/* Room Cards */}
               <View className="px-4">
-                {data.rooms.map((room) => (
+                {availableHotels?.room_availability?.map((room: any) => (
                   <RoomCard
                     checkOutDate={checkOutDate}
                     checkInDate={checkInDate}
-                    key={room.id}
+                    key={room.room_type_id}
                     room={room}
                   />
                 ))}

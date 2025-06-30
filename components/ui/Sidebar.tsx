@@ -1,6 +1,6 @@
 import { userLoggedOut } from "@/redux/feature/authentication/authenticationSlice";
 import { ChevronDown } from "lucide-react-native"; // Lucide icon
-import React, { useState } from "react";
+import React, { useMemo } from "react";
 import {
   Platform,
   SafeAreaView,
@@ -41,22 +41,57 @@ export const Header = ({ onMenuPress }: HeaderProps) => {
   );
 };
 
+interface Hotel {
+  id: number;
+  name: string;
+  city: string;
+  address: string;
+  country: string;
+  is_active: boolean;
+  star_rating: string;
+}
+
+interface HotelsApiResponse {
+  links: {
+    next: string | null;
+    previous: string | null;
+  };
+  count: number;
+  results: Hotel[];
+}
+
 interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
+  hotels: HotelsApiResponse | null;
+  selectedHotel: any;
+  setSelectedHotel: any;
 }
 
 const SIDEBAR_WIDTH = 300;
 
-export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
+export const Sidebar = ({
+  isOpen,
+  onClose,
+  hotels,
+  selectedHotel,
+  setSelectedHotel,
+}: SidebarProps) => {
   const dispatch = useDispatch();
-  const [selectedHotel, setSelectedHotel] = useState("sohag");
 
-  const hotelOptions = [
-    { label: "Sohag Hotel", value: "sohag" },
-    { label: "Green Palace", value: "green_palace" },
-    { label: "Royal Inn", value: "royal_inn" },
-  ];
+  // Transform hotels API response into picker options
+  const hotelOptions = useMemo(() => {
+    if (!hotels || !hotels.results) {
+      return [];
+    }
+
+    return hotels.results
+      .filter((hotel) => hotel.is_active) // Only show active hotels
+      .map((hotel) => ({
+        label: `${hotel.name} - ${hotel.city}`,
+        value: hotel.id.toString(),
+      }));
+  }, [hotels]);
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
@@ -81,6 +116,12 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
   const handleLogout = () => {
     dispatch(userLoggedOut());
+  };
+
+  const handleHotelChange = (value: string) => {
+    setSelectedHotel(value);
+    // You can add additional logic here to handle hotel selection
+    // For example, dispatch an action to update the selected hotel in Redux
   };
 
   const menuItems = [
@@ -133,20 +174,27 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           <Text className="text-sm mb-2 text-black">Hotel Selection</Text>
           <View className="border border-gray-300 rounded-lg px-3 py-2 bg-white">
             <RNPickerSelect
-              onValueChange={(value) => setSelectedHotel(value)}
+              onValueChange={handleHotelChange}
               value={selectedHotel}
-              placeholder={{ label: "Select a hotel...", value: null }}
+              placeholder={{
+                label:
+                  hotelOptions.length > 0
+                    ? "Select a hotel..."
+                    : "No hotels available",
+                value: null,
+              }}
               items={hotelOptions}
               useNativeAndroidPickerStyle={false}
+              disabled={hotelOptions.length === 0}
               style={{
                 inputIOS: {
                   fontSize: 16,
-                  color: "#000",
+                  color: hotelOptions.length > 0 ? "#000" : "#999",
                   paddingVertical: 8,
                 },
                 inputAndroid: {
                   fontSize: 16,
-                  color: "#000",
+                  color: hotelOptions.length > 0 ? "#000" : "#999",
                   paddingVertical: 8,
                 },
                 iconContainer: {
@@ -157,6 +205,11 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
               Icon={() => <ChevronDown size={20} color="#000" />}
             />
           </View>
+          {hotels && (
+            <Text className="text-xs text-gray-600 mt-1">
+              {hotels.count} hotel{hotels.count !== 1 ? "s" : ""} available
+            </Text>
+          )}
         </View>
 
         <View className="px-6">

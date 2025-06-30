@@ -1,3 +1,4 @@
+import { useCreateBookingMutation } from "@/redux/feature/hotel/hotelApi";
 import { ArrowLeft } from "lucide-react-native";
 import { MotiView } from "moti";
 import React, { useEffect, useState } from "react";
@@ -13,6 +14,7 @@ import {
 } from "react-native";
 import { Easing } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
 import { BookingFormData } from "../types/bookings";
 import { CustomTextInput } from "../ui/CustomTextInput";
 
@@ -25,6 +27,7 @@ interface BookingModalProps {
   roomId: string;
   checkOutDate: string;
   checkInDate: string;
+  roomTypeId: any;
 }
 
 // Date formatter helper
@@ -51,6 +54,7 @@ export const BookingModal = ({
   roomId,
   checkOutDate,
   checkInDate,
+  roomTypeId,
 }: BookingModalProps) => {
   const [isClosing, setIsClosing] = useState(false);
 
@@ -66,6 +70,8 @@ export const BookingModal = ({
     extraBedsPerRoom: "",
     couponCode: "",
   });
+
+  const [createBooking, { isLoading }] = useCreateBookingMutation();
 
   const [errors, setErrors] = useState<
     Partial<Record<keyof BookingFormData, string>>
@@ -133,37 +139,51 @@ export const BookingModal = ({
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = () => {
-    if (validateForm()) {
-      const payload = {
-        guest: {
-          first_name: formData.firstName.trim(),
-          last_name: formData.lastName.trim(),
-          email: formData.email.trim(),
-        },
-        booking: {
-          room_type: parseInt(roomId, 10),
-          check_in_date: checkInDate,
-          check_out_date: checkOutDate,
-          number_of_adults: parseInt(formData.numberOfAdults, 10),
-          number_of_children: parseInt(formData.numberOfChildren, 10),
-          number_of_rooms: parseInt(formData.numberOfRooms, 10),
-          extra_bed_request: formData.extraBedRequested,
-          extra_bed_rooms_count: formData.extraBedRequested
-            ? parseInt(formData.roomsNeedingExtraBed, 10)
-            : 0,
-          extra_bed_count_per_room: formData.extraBedRequested
-            ? parseInt(formData.extraBedsPerRoom, 10)
-            : 0,
-          booking_type: "daily",
-          coupon_code: formData.couponCode.trim() || null,
-        },
-      };
+  const handleSubmit = async () => {
+    if (!validateForm()) return;
 
-      console.log("=== BOOKING SUBMISSION ===");
-      console.log(JSON.stringify(payload, null, 2));
-      console.log("========================");
-      onClose();
+    const payload = {
+      guest: {
+        first_name: formData.firstName.trim(),
+        last_name: formData.lastName.trim(),
+        email: formData.email.trim(),
+      },
+      booking: {
+        room_type: parseInt(roomTypeId, 10),
+        check_in_date: checkInDate,
+        check_out_date: checkOutDate,
+        number_of_adults: parseInt(formData.numberOfAdults, 10),
+        number_of_children: parseInt(formData.numberOfChildren, 10),
+        number_of_rooms: parseInt(formData.numberOfRooms, 10),
+        extra_bed_request: formData.extraBedRequested,
+        extra_bed_rooms_count: formData.extraBedRequested
+          ? parseInt(formData.roomsNeedingExtraBed, 10)
+          : 0,
+        extra_bed_count_per_room: formData.extraBedRequested
+          ? parseInt(formData.extraBedsPerRoom, 10)
+          : 0,
+        booking_type: "daily",
+        coupon_code: formData.couponCode.trim() || null,
+      },
+    };
+
+    try {
+      await createBooking(payload).unwrap();
+      Toast.show({
+        type: "success",
+        text1: "Booking Created",
+        text2: "Your booking was successfully created.",
+      });
+      handleClose();
+    } catch (error: any) {
+      const errorMessage =
+        error?.data?.error || "Something went wrong. Please try again.";
+      console.error("Booking creation failed:", errorMessage);
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: errorMessage,
+      });
     }
   };
 
@@ -330,7 +350,7 @@ export const BookingModal = ({
                 className="bg-yellow-400 py-4 px-8 rounded-2xl mt-8 mx-auto"
               >
                 <Text className="text-base font-bold text-black text-center">
-                  Submit Booking
+                  {isLoading ? "Submitting..." : "Submit Booking"}
                 </Text>
               </TouchableOpacity>
             </View>

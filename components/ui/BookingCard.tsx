@@ -8,8 +8,9 @@ import {
   User,
   Users,
 } from "lucide-react-native";
-import React from "react";
+import React, { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
+import ConfirmationModal from "../modal/ConfirmationModal";
 
 export interface BookingData {
   hotel_name: string; // This is consistent with your usage
@@ -43,6 +44,31 @@ export const BookingCard: React.FC<BookingCardProps> = ({
   onMarkNoShow,
   onTakePayment,
 }) => {
+  const [isNoShowModalVisible, setNoShowModalVisible] = useState(false);
+  const [isPaymentModalVisible, setPaymentModalVisible] = useState(false);
+
+  const handleMarkNoShow = () => {
+    setNoShowModalVisible(true);
+  };
+
+  const handleTakePayment = () => {
+    setPaymentModalVisible(true);
+  };
+
+  const confirmMarkNoShow = () => {
+    if (onMarkNoShow) {
+      onMarkNoShow();
+    }
+    setNoShowModalVisible(false);
+  };
+
+  const confirmTakePayment = () => {
+    if (onTakePayment) {
+      onTakePayment();
+    }
+    setPaymentModalVisible(false);
+  };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "confirmed":
@@ -198,7 +224,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
       {/* Action Buttons */}
       <View className="flex-row justify-between mt-6 space-x-4">
         <TouchableOpacity
-          onPress={onMarkNoShow}
+          onPress={handleMarkNoShow}
           className="flex-1 bg-red-500 rounded-2xl py-4 mr-2"
         >
           <Text className="text-white text-center font-semibold text-lg">
@@ -207,7 +233,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
         </TouchableOpacity>
 
         <TouchableOpacity
-          onPress={onTakePayment}
+          onPress={handleTakePayment}
           className="flex-1 bg-green-500 rounded-2xl py-4 ml-2"
         >
           <Text className="text-white text-center font-semibold text-lg">
@@ -215,6 +241,28 @@ export const BookingCard: React.FC<BookingCardProps> = ({
           </Text>
         </TouchableOpacity>
       </View>
+
+      {/* Mark No-Show Modal */}
+      <ConfirmationModal
+        visible={isNoShowModalVisible}
+        title="Hide Booking"
+        message="Are you sure you want to hide this booking?"
+        onConfirm={confirmMarkNoShow}
+        onCancel={() => setNoShowModalVisible(false)}
+        confirmText="Confirm"
+        cancelText="Cancel"
+      />
+
+      {/* Take Payment Modal */}
+      <ConfirmationModal
+        visible={isPaymentModalVisible}
+        title="Payment Confirmation"
+        message={`Did you receive the payment of ৳${booking.total_price} taka from the guest?`}
+        onConfirm={confirmTakePayment}
+        onCancel={() => setPaymentModalVisible(false)}
+        confirmText="Yes"
+        cancelText="No"
+      />
     </View>
   );
 };

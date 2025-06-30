@@ -26,8 +26,11 @@ export const DatePickerModal = ({
 
   const handleOK = () => {
     if (selectedDay) {
-      const dateString = `Sun, Jun ${selectedDay}`;
-      onDateSelect(dateString);
+      // Build a proper ISO date string
+      const dateObj = new Date(2025, 5, selectedDay); // Month is 0-based: 5 = June
+      const isoDateString = dateObj.toISOString().split("T")[0]; // e.g., 2025-06-07
+
+      onDateSelect(isoDateString);
       setSelectedDay(null);
     }
   };

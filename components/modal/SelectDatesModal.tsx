@@ -23,6 +23,18 @@ export const SelectDatesModal = ({
 }: SelectDatesModalProps) => {
   const isSubmitEnabled = checkInDate && checkOutDate;
 
+  // Helper to format ISO date to "Month Day, Year"
+  const formatDisplayDate = (date: string) => {
+    if (!date) return "Select date";
+    const parsed = new Date(date);
+    if (isNaN(parsed.getTime())) return date; // fallback if invalid
+    return parsed.toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
+  };
+
   return (
     <Modal
       visible={visible}
@@ -52,7 +64,7 @@ export const SelectDatesModal = ({
                 checkInDate ? "font-medium text-black" : "text-gray-400"
               }`}
             >
-              {checkInDate || "Select date"}
+              {formatDisplayDate(checkInDate)}
             </Text>
           </TouchableOpacity>
 
@@ -66,7 +78,7 @@ export const SelectDatesModal = ({
                 checkOutDate ? "font-medium text-black" : "text-gray-400"
               }`}
             >
-              {checkOutDate || "Select date"}
+              {formatDisplayDate(checkOutDate)}
             </Text>
           </TouchableOpacity>
 

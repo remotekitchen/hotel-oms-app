@@ -94,7 +94,7 @@ export default function LoginScreen() {
 
             <View className="gap-y-2 mb-6">
               <TextInput
-                className="w-full h-14 border border-gray-300 rounded-xl px-4 text-lg bg-white text-black"
+                className="w-full h-14 border border-gray-300 rounded-xl px-4 text-lg bg-white text-black mb-2"
                 placeholder="Email"
                 placeholderTextColor="#999"
                 autoCapitalize="none"

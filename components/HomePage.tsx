@@ -13,6 +13,7 @@ import { SelectDatesModal } from "./modal/SelectDatesModal";
 import { ThemedView } from "./ThemedView";
 import { BookingList } from "./ui/BookingList";
 import { Header } from "./ui/Header";
+import RoomList from "./ui/RoomList";
 import { Sidebar } from "./ui/Sidebar";
 
 export default function HomePage() {
@@ -100,6 +101,7 @@ export default function HomePage() {
             <Header
               onCreateBookingPress={handleCreateBookingPress}
               onMenuPress={handleToggleSidebar}
+              currentPage={currentPage}
             />
             <Sidebar
               hotels={hotels}
@@ -117,13 +119,14 @@ export default function HomePage() {
             />
           </>
         )}
-        <View className="flex-1 pt-4">
+        <View className="flex-1">
           {currentPage === "home" && (
             <BookingList
               onMarkNoShow={handleMarkNoShow}
               onTakePayment={handleTakePayment}
             />
           )}
+          {currentPage === "roomInfo" && <RoomList />}
           <SelectDatesModal
             visible={selectDatesVisible}
             onClose={handleCloseModal}

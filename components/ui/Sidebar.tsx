@@ -132,6 +132,8 @@ export const Sidebar = ({
       onNavigate("home");
     } else if (label === "History") {
       onNavigate("history");
+    } else if (label === "Room Info") {
+      onNavigate("roomInfo");
     }
     // Add more routes as needed
   };

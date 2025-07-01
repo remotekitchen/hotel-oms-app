@@ -66,6 +66,7 @@ interface SidebarProps {
   hotels: HotelsApiResponse | null;
   selectedHotel: any;
   setSelectedHotel: any;
+  onNavigate: (route: string) => void;
 }
 
 const SIDEBAR_WIDTH = 300;
@@ -76,6 +77,7 @@ export const Sidebar = ({
   hotels,
   selectedHotel,
   setSelectedHotel,
+  onNavigate,
 }: SidebarProps) => {
   const dispatch = useDispatch();
 
@@ -122,6 +124,16 @@ export const Sidebar = ({
     setSelectedHotel(value);
     // You can add additional logic here to handle hotel selection
     // For example, dispatch an action to update the selected hotel in Redux
+  };
+
+  const handleMenuClick = (label: string) => {
+    onClose();
+    if (label === "Home") {
+      onNavigate("home");
+    } else if (label === "History") {
+      onNavigate("history");
+    }
+    // Add more routes as needed
   };
 
   const menuItems = [
@@ -217,6 +229,7 @@ export const Sidebar = ({
             <TouchableOpacity
               key={index}
               className="flex-row items-center py-4"
+              onPress={() => handleMenuClick(item.label)}
             >
               {/* @ts-ignore */}
               <IconSymbol name={item.icon} size={24} color="#000" />

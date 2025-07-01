@@ -3,8 +3,11 @@ import {
   useBookingsQuery,
   useHotelsQuery,
 } from "@/redux/feature/hotel/hotelApi";
+import { StatusBar } from "expo-status-bar";
+import { AnimatePresence, MotiView } from "moti";
 import React, { useEffect, useState } from "react";
-import { ScrollView, View } from "react-native";
+import { Dimensions, ScrollView, View } from "react-native";
+import HistoryPage from "./HistoryPage";
 import { AvailableRoomsModal } from "./modal/AvailableRoomsModal";
 import { SelectDatesModal } from "./modal/SelectDatesModal";
 import { ThemedView } from "./ThemedView";
@@ -17,6 +20,10 @@ export default function HomePage() {
   const [availableRoomsVisible, setAvailableRoomsVisible] = useState(false);
   const [selectedHotel, setSelectedHotel] = useState<string | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState("home");
+  console.log(currentPage, "currentPage");
+  const [historyModalVisible, setHistoryModalVisible] = useState(false);
+  const SCREEN_WIDTH = Dimensions.get("window").width;
 
   const { data: booking } = useBookingsQuery({});
   const { data: hotels } = useHotelsQuery({});
@@ -88,29 +95,40 @@ export default function HomePage() {
   return (
     <ScrollView>
       <ThemedView className="flex-1 bg-white h-screen">
-        <Header
-          onCreateBookingPress={handleCreateBookingPress}
-          onMenuPress={handleToggleSidebar}
-        />
-        <Sidebar
-          hotels={hotels}
-          isOpen={isSidebarOpen}
-          onClose={handleCloseSidebar}
-          selectedHotel={selectedHotel}
-          setSelectedHotel={setSelectedHotel}
-        />
-
+        {!historyModalVisible && (
+          <>
+            <Header
+              onCreateBookingPress={handleCreateBookingPress}
+              onMenuPress={handleToggleSidebar}
+            />
+            <Sidebar
+              hotels={hotels}
+              isOpen={isSidebarOpen}
+              onClose={handleCloseSidebar}
+              selectedHotel={selectedHotel}
+              setSelectedHotel={setSelectedHotel}
+              onNavigate={(route) => {
+                if (route === "history") {
+                  setHistoryModalVisible(true);
+                } else {
+                  setCurrentPage(route);
+                }
+              }}
+            />
+          </>
+        )}
         <View className="flex-1 pt-4">
-          <BookingList
-            onMarkNoShow={handleMarkNoShow}
-            onTakePayment={handleTakePayment}
-          />
+          {currentPage === "home" && (
+            <BookingList
+              onMarkNoShow={handleMarkNoShow}
+              onTakePayment={handleTakePayment}
+            />
+          )}
           <SelectDatesModal
             visible={selectDatesVisible}
             onClose={handleCloseModal}
             onSubmit={handleSubmitDates}
           />
-
           <AvailableRoomsModal
             visible={availableRoomsVisible}
             onClose={handleCloseAvailableRooms}
@@ -120,6 +138,30 @@ export default function HomePage() {
             selectedHotel={selectedHotel}
             setSelectedHotel={setSelectedHotel}
           />
+          <AnimatePresence>
+            {historyModalVisible && (
+              <MotiView
+                from={{ translateX: SCREEN_WIDTH }}
+                animate={{ translateX: 0 }}
+                exit={{ translateX: SCREEN_WIDTH }}
+                transition={{ type: "timing", duration: 400 }}
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  backgroundColor: "white",
+                  zIndex: 9999,
+                  height: "100%",
+                  width: "100%",
+                }}
+              >
+                <StatusBar style="light" backgroundColor="#000" />
+                <HistoryPage onBack={() => setHistoryModalVisible(false)} />
+              </MotiView>
+            )}
+          </AnimatePresence>
         </View>
       </ThemedView>
     </ScrollView>

@@ -87,9 +87,9 @@ const RoomList: React.FC = () => {
           </Text>
 
           {/* Buttons */}
-          <View className="space-y-4">
+          <View className="">
             <TouchableOpacity
-              className={`py-2 px-4 rounded-md ${
+              className={`py-2 px-4 rounded-md mb-2 ${
                 item.isAvailable ? "bg-yellow-400" : "bg-gray-300"
               }`}
               disabled={!item.isAvailable}

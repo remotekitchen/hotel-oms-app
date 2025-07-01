@@ -1,4 +1,8 @@
 import {
+  useHideBookingMutation,
+  useTakePaymentMutation,
+} from "@/redux/feature/hotel/hotelApi";
+import {
   Building,
   Calendar,
   CreditCard,
@@ -10,12 +14,14 @@ import {
 } from "lucide-react-native";
 import React, { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
+import Toast from "react-native-toast-message"; // Importing react-native-toast-message
 import ConfirmationModal from "../modal/ConfirmationModal";
 
 export interface BookingData {
-  hotel_name: string; // This is consistent with your usage
+  id: number;
+  hotel_name: string;
   customer_name: string;
-  room_type_name: string; // Correct the field name for room type
+  room_type_name: string;
   booking_number: string;
   check_in_date: string;
   check_out_date: string;
@@ -47,7 +53,10 @@ export const BookingCard: React.FC<BookingCardProps> = ({
   const [isNoShowModalVisible, setNoShowModalVisible] = useState(false);
   const [isPaymentModalVisible, setPaymentModalVisible] = useState(false);
 
-  const handleMarkNoShow = () => {
+  const [hideBooking] = useHideBookingMutation();
+  const [takePayment] = useTakePaymentMutation();
+
+  const handleMarkNoShow = (bookingId: number) => {
     setNoShowModalVisible(true);
   };
 
@@ -55,18 +64,41 @@ export const BookingCard: React.FC<BookingCardProps> = ({
     setPaymentModalVisible(true);
   };
 
-  const confirmMarkNoShow = () => {
-    if (onMarkNoShow) {
-      onMarkNoShow();
+  const confirmMarkNoShow = async () => {
+    try {
+      const response = await hideBooking(booking.id).unwrap(); // Unwrap to handle the response
+      Toast.show({
+        type: "success",
+        position: "top",
+        text1: "Booking Hidden",
+        text2: "The booking has been marked as no-show.",
+      });
+    } catch (error) {
+      console.error("Error hiding booking:", error);
+    } finally {
+      setNoShowModalVisible(false);
     }
-    setNoShowModalVisible(false);
   };
 
-  const confirmTakePayment = () => {
-    if (onTakePayment) {
-      onTakePayment();
+  const confirmTakePayment = async () => {
+    try {
+      const response = await takePayment({
+        bookingId: booking.id,
+        amount: booking.total_price,
+        payment_method: "cash",
+        payment_type: "full",
+      }).unwrap(); // Unwrap to handle the response
+      Toast.show({
+        type: "success",
+        position: "top",
+        text1: "Payment Successful",
+        text2: `Payment of ৳${booking.total_price} has been completed.`,
+      });
+    } catch (error) {
+      console.error("Error processing payment:", error);
+    } finally {
+      setPaymentModalVisible(false);
     }
-    setPaymentModalVisible(false);
   };
 
   const getStatusColor = (status: string) => {
@@ -224,7 +256,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
       {/* Action Buttons */}
       <View className="flex-row justify-between mt-6 space-x-4">
         <TouchableOpacity
-          onPress={handleMarkNoShow}
+          onPress={() => handleMarkNoShow(booking.id)}
           className="flex-1 bg-red-500 rounded-2xl py-4 mr-2"
         >
           <Text className="text-white text-center font-semibold text-lg">

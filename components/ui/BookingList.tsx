@@ -18,13 +18,26 @@ export const BookingList: React.FC<BookingListProps> = ({
 }) => {
   const [searchText, setSearchText] = useState("");
   const textColor = useThemeColor({}, "text");
+
+  // Handle search input change
   const handleSearch = (searchText: string) => {
     setSearchText(searchText);
   };
+
+  // Fetch bookings from the API
   const { data: bookings } = useBookingsQuery({});
-  const filteredBookings = bookings?.results?.filter((booking: any) =>
-    booking?.hotel_name?.toLowerCase().includes(searchText.toLowerCase())
-  );
+
+  // Filter bookings:
+  // - Apply search filter by hotel name
+  // - Exclude bookings with status "no_show"
+  const filteredBookings = bookings?.results?.filter((booking: any) => {
+    return (
+      booking?.hotel_name?.toLowerCase().includes(searchText.toLowerCase()) &&
+      booking?.status !== "no_show" &&
+      booking?.payment_status !== "paid"
+    );
+  });
+
   return (
     <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
       <SearchBar onSearch={handleSearch} />

@@ -3,7 +3,7 @@ import {
   useBookingsQuery,
   useHotelsQuery,
 } from "@/redux/feature/hotel/hotelApi";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollView, View } from "react-native";
 import { AvailableRoomsModal } from "./modal/AvailableRoomsModal";
 import { SelectDatesModal } from "./modal/SelectDatesModal";
@@ -20,6 +20,23 @@ export default function HomePage() {
 
   const { data: booking } = useBookingsQuery({});
   const { data: hotels } = useHotelsQuery({});
+
+  // Set default selected hotel to first active hotel
+  useEffect(() => {
+    if (
+      hotels &&
+      hotels.results &&
+      hotels.results.length > 0 &&
+      !selectedHotel
+    ) {
+      const firstActiveHotel = hotels.results.find(
+        (hotel: any) => hotel.is_active
+      );
+      if (firstActiveHotel) {
+        setSelectedHotel(firstActiveHotel.id.toString());
+      }
+    }
+  }, [hotels, selectedHotel]);
 
   const handleToggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -70,7 +87,7 @@ export default function HomePage() {
   };
   return (
     <ScrollView>
-      <ThemedView className="flex-1 bg-white">
+      <ThemedView className="flex-1 bg-white h-screen">
         <Header
           onCreateBookingPress={handleCreateBookingPress}
           onMenuPress={handleToggleSidebar}

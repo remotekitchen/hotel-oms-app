@@ -7,11 +7,13 @@ interface CheckAvailabilityModalProps {
   visible: boolean;
   onClose: () => void;
   room: any;
+  onSubmit: (start: string, end: string) => void;
 }
 
 export const CheckAvailabilityModal = ({
   visible,
   onClose,
+  onSubmit,
 }: CheckAvailabilityModalProps) => {
   const [checkInDate, setCheckInDate] = useState("");
   const [checkOutDate, setCheckOutDate] = useState("");
@@ -52,8 +54,7 @@ export const CheckAvailabilityModal = ({
 
   const handleSubmit = () => {
     if (isSubmitEnabled) {
-      // handle submit logic here
-      onClose();
+      onSubmit(checkInDate, checkOutDate);
     }
   };
 

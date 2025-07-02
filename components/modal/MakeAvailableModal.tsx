@@ -56,7 +56,7 @@ const MakeAvailableModal = ({
     } catch (error: any) {
       const errorMsg =
         error?.data?.detail || error?.message || "Something went wrong.";
-      console.error("Make available error:", errorMsg);
+      //   console.error("Make available error:", errorMsg);
       Toast.show({
         type: "error",
         text1: "Error",

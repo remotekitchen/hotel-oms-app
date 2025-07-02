@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { CheckAvailabilityModal } from "../modal/CheckAvailabilityModal";
 import MakeAvailableModal from "../modal/MakeAvailableModal";
+import RoomAvailabilityModal from "../modal/RoomAvailabilityModal";
 
 interface Room {
   id: string;
@@ -48,9 +49,20 @@ const RoomList: React.FC = () => {
   const [checkAvailabilityVisible, setCheckAvailabilityVisible] =
     useState(false);
   const [makeAvailableVisible, setMakeAvailableVisible] = useState(false);
+  const [roomAvailabilityVisible, setRoomAvailabilityVisible] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState<any>(null);
+  const [availabilityDates, setAvailabilityDates] = useState<{
+    start: string;
+    end: string;
+  } | null>(null);
 
   // console.log(JSON.stringify(getRooms?.results, null, 2), "get-rooms updated");
+
+  const handleCheckAvailabilitySubmit = (start: string, end: string) => {
+    setAvailabilityDates({ start, end });
+    setCheckAvailabilityVisible(false);
+    setTimeout(() => setRoomAvailabilityVisible(true), 350); // allow modal transition
+  };
 
   return (
     <>
@@ -142,12 +154,20 @@ const RoomList: React.FC = () => {
         visible={checkAvailabilityVisible}
         onClose={() => setCheckAvailabilityVisible(false)}
         room={selectedRoom}
+        onSubmit={handleCheckAvailabilitySubmit}
       />
       <MakeAvailableModal
         visible={makeAvailableVisible}
         onClose={() => setMakeAvailableVisible(false)}
         room={selectedRoom}
         selectedRoom={selectedRoom?.id}
+      />
+      <RoomAvailabilityModal
+        visible={roomAvailabilityVisible}
+        onClose={() => setRoomAvailabilityVisible(false)}
+        room={selectedRoom}
+        startDate={availabilityDates?.start}
+        endDate={availabilityDates?.end}
       />
     </>
   );

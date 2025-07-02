@@ -9,6 +9,7 @@ import React, { useEffect, useState } from "react";
 import { Dimensions, ScrollView, View } from "react-native";
 import HistoryPage from "./HistoryPage";
 import { AvailableRoomsModal } from "./modal/AvailableRoomsModal";
+import { CreateRoomModal } from "./modal/CreateRoomModal";
 import { SelectDatesModal } from "./modal/SelectDatesModal";
 import { ThemedView } from "./ThemedView";
 import { BookingList } from "./ui/BookingList";
@@ -25,6 +26,7 @@ export default function HomePage() {
   console.log(currentPage, "currentPage");
   const [historyModalVisible, setHistoryModalVisible] = useState(false);
   const SCREEN_WIDTH = Dimensions.get("window").width;
+  const [createRoomVisible, setCreateRoomVisible] = useState(false);
 
   const { data: booking } = useBookingsQuery({});
   const { data: hotels } = useHotelsQuery({});
@@ -101,6 +103,7 @@ export default function HomePage() {
             <Header
               onCreateBookingPress={handleCreateBookingPress}
               onMenuPress={handleToggleSidebar}
+              onCreateRoomPress={() => setCreateRoomVisible(true)}
               currentPage={currentPage}
             />
             <Sidebar
@@ -127,6 +130,13 @@ export default function HomePage() {
             />
           )}
           {currentPage === "roomInfo" && <RoomList />}
+          {currentPage === "roomInfo" && (
+            <CreateRoomModal
+              selectedHotel={selectedHotel}
+              visible={createRoomVisible}
+              onClose={() => setCreateRoomVisible(false)}
+            />
+          )}
           <SelectDatesModal
             visible={selectDatesVisible}
             onClose={handleCloseModal}

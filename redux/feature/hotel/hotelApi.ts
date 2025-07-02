@@ -58,6 +58,36 @@ export const hotelApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["ACCOUNT"],
     }),
+    addRoom: builder.mutation({
+      query: (bookingData) => ({
+        url: `api/hotel/v1/oms/room-types/`,
+        method: "POST",
+        body: bookingData,
+      }),
+      invalidatesTags: ["ACCOUNT"],
+    }),
+    getRooms: builder.query({
+      query: () => ({
+        url: `api/hotel/v1/oms/room-types/`,
+        method: "GET",
+      }),
+      providesTags: ["ACCOUNT"],
+    }),
+    checkAvailability: builder.query({
+      query: ({ roomId, start_date, end_date }) => ({
+        url: `api/hotel/v1/oms/room-types/${roomId}/availability-summary/?start=${start_date}&end=${end_date}`,
+        method: "GET",
+      }),
+      providesTags: ["ACCOUNT"],
+    }),
+    makeAvailable: builder.mutation({
+      query: (roomData) => ({
+        url: `api/hotel/v1/oms/availability/`,
+        method: "POST",
+        body: roomData,
+      }),
+      invalidatesTags: ["ACCOUNT"],
+    }),
   }),
 });
 
@@ -69,4 +99,8 @@ export const {
   useHideBookingMutation,
   useTakePaymentMutation,
   useBookingHistoryQuery,
+  useAddRoomMutation,
+  useGetRoomsQuery,
+  useCheckAvailabilityQuery,
+  useMakeAvailableMutation,
 } = hotelApi;

@@ -7,12 +7,14 @@ import { IconSymbol } from "./IconSymbol";
 interface HeaderProps {
   onMenuPress: () => void;
   onCreateBookingPress: any;
+  onCreateRoomPress: () => void;
   currentPage: string;
 }
 
 export const Header = ({
   onMenuPress,
   onCreateBookingPress,
+  onCreateRoomPress,
   currentPage,
 }: HeaderProps) => {
   return (
@@ -31,7 +33,7 @@ export const Header = ({
         </View>
         {currentPage === "roomInfo" ? (
           <TouchableOpacity
-            // onPress={}
+            onPress={onCreateRoomPress}
             className="bg-yellow-400 px-4 py-2 rounded-xl"
           >
             <ThemedText className="text-sm font-bold text-black">

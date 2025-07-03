@@ -3,11 +3,9 @@ import {
   useBookingsQuery,
   useHotelsQuery,
 } from "@/redux/feature/hotel/hotelApi";
-import { StatusBar } from "expo-status-bar";
-import { AnimatePresence, MotiView } from "moti";
 import React, { useEffect, useState } from "react";
 import { Dimensions, ScrollView, View } from "react-native";
-import HistoryPage from "./HistoryPage";
+import HistoryModal from "./HistoryPage";
 import { AvailableRoomsModal } from "./modal/AvailableRoomsModal";
 import { CreateRoomModal } from "./modal/CreateRoomModal";
 import { SelectDatesModal } from "./modal/SelectDatesModal";
@@ -151,30 +149,10 @@ export default function HomePage() {
             selectedHotel={selectedHotel}
             setSelectedHotel={setSelectedHotel}
           />
-          <AnimatePresence>
-            {historyModalVisible && (
-              <MotiView
-                from={{ translateX: SCREEN_WIDTH }}
-                animate={{ translateX: 0 }}
-                exit={{ translateX: SCREEN_WIDTH }}
-                transition={{ type: "timing", duration: 400 }}
-                style={{
-                  position: "absolute",
-                  top: 0,
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  backgroundColor: "white",
-                  zIndex: 9999,
-                  height: "100%",
-                  width: "100%",
-                }}
-              >
-                <StatusBar style="light" backgroundColor="#000" />
-                <HistoryPage onBack={() => setHistoryModalVisible(false)} />
-              </MotiView>
-            )}
-          </AnimatePresence>
+          <HistoryModal
+            visible={historyModalVisible}
+            onExited={() => setHistoryModalVisible(false)}
+          />
         </View>
       </ThemedView>
     </ScrollView>

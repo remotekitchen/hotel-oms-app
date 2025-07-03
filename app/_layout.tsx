@@ -1,33 +1,58 @@
-import { useColorScheme } from "@/hooks/useColorScheme";
+import HomePage from "@/components/HomePage";
+import LoginScreen from "@/components/LoginScreen";
 import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "@react-navigation/native";
+  selectToken,
+  userLoggedIn,
+} from "@/redux/feature/authentication/authenticationSlice";
+import { store } from "@/redux/store";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { NativeBaseProvider, extendTheme } from "native-base";
+import { useEffect } from "react";
 import "react-native-reanimated";
+import Toast from "react-native-toast-message";
+import { Provider, useDispatch, useSelector } from "react-redux";
 import "../global.css";
 
+// Optional: basic NativeBase theme (can remove or customize later)
+const theme = extendTheme({});
+
+function AuthGate() {
+  const token = useSelector(selectToken);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    const hydrateAuth = async () => {
+      const authData = await AsyncStorage.getItem("auth");
+      if (authData) {
+        const { token, user } = JSON.parse(authData);
+        if (token && user) {
+          dispatch(userLoggedIn({ token, user }));
+        }
+      }
+    };
+    hydrateAuth();
+  }, [dispatch]);
+  console.log(token, "get-tokennnn");
+  return token ? <HomePage /> : <LoginScreen />;
+}
+
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
 
   if (!loaded) {
-    // Async font loading only occurs in development.
     return null;
   }
 
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <NativeBaseProvider theme={theme}>
+      <Provider store={store}>
+        <StatusBar style="auto" translucent />
+        <AuthGate />
+        <Toast />
+      </Provider>
+    </NativeBaseProvider>
   );
 }

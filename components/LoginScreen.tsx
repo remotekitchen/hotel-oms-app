@@ -1,5 +1,6 @@
 import { useLoginMutation } from "@/redux/feature/authentication/authenticationApi";
 import { userLoggedIn } from "@/redux/feature/authentication/authenticationSlice";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Updates from "expo-updates";
 import React, { useCallback, useState } from "react";
 import {
@@ -48,7 +49,14 @@ export default function LoginScreen() {
     if (validate()) {
       try {
         const result = await login({ email, password }).unwrap();
-        console.log("Login Success:", JSON.stringify(result, null, 2));
+        // Save to AsyncStorage
+        await AsyncStorage.setItem(
+          "auth",
+          JSON.stringify({
+            token: result.token,
+            user: result.user_info,
+          })
+        );
         dispatch(userLoggedIn({ token: result.token, user: result.user_info }));
       } catch (error) {
         // console.error("Login Failed:", error?.data?.non_field_errors);

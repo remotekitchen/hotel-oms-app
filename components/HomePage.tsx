@@ -9,7 +9,7 @@ import HistoryModal from "./HistoryPage";
 import { AvailableRoomsModal } from "./modal/AvailableRoomsModal";
 import { CreateRoomModal } from "./modal/CreateRoomModal";
 import { SelectDatesModal } from "./modal/SelectDatesModal";
-import { ThemedView } from "./ThemedView";
+// Remove: import { FixedView } from "./ThemedView";
 import { BookingList } from "./ui/BookingList";
 import { Header } from "./ui/Header";
 import RoomList from "./ui/RoomList";
@@ -95,7 +95,7 @@ export default function HomePage() {
   };
   return (
     <ScrollView>
-      <ThemedView className="flex-1 bg-white h-screen">
+      <View className="flex-1 bg-white h-screen">
         {!historyModalVisible && (
           <>
             <Header
@@ -154,7 +154,7 @@ export default function HomePage() {
             onExited={() => setHistoryModalVisible(false)}
           />
         </View>
-      </ThemedView>
+      </View>
     </ScrollView>
   );
 }

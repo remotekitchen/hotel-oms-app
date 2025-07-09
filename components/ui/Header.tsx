@@ -1,7 +1,6 @@
 import React from "react";
-import { TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ThemedText } from "../ThemedText";
 import { IconSymbol } from "./IconSymbol";
 
 interface HeaderProps {
@@ -27,27 +26,23 @@ export const Header = ({
           >
             <IconSymbol name="list.bullet" size={24} color="#000" />
           </TouchableOpacity>
-          <ThemedText className="text-xl font-bold text-black">
+          <Text className="text-xl font-bold text-black">
             {currentPage === "roomInfo" ? "Rooms" : "Home"}
-          </ThemedText>
+          </Text>
         </View>
         {currentPage === "roomInfo" ? (
           <TouchableOpacity
             onPress={onCreateRoomPress}
             className="bg-yellow-400 px-4 py-2 rounded-xl"
           >
-            <ThemedText className="text-sm font-bold text-black">
-              Create Room
-            </ThemedText>
+            <Text className="text-sm font-bold text-black">Create Room</Text>
           </TouchableOpacity>
         ) : (
           <TouchableOpacity
             onPress={onCreateBookingPress}
             className="bg-yellow-400 px-4 py-2 rounded-xl"
           >
-            <ThemedText className="text-sm font-bold text-black">
-              Create Booking
-            </ThemedText>
+            <Text className="text-sm font-bold text-black">Create Booking</Text>
           </TouchableOpacity>
         )}
       </View>

@@ -1,4 +1,3 @@
-import { useThemeColor } from "@/hooks/useThemeColor";
 import { useBookingsQuery } from "@/redux/feature/hotel/hotelApi";
 import React, { useState } from "react";
 import { ScrollView, Text, View } from "react-native";
@@ -17,7 +16,6 @@ export const BookingList: React.FC<BookingListProps> = ({
   onTakePayment,
 }) => {
   const [searchText, setSearchText] = useState("");
-  const textColor = useThemeColor({}, "text");
 
   // Handle search input change
   const handleSearch = (searchText: string) => {
@@ -56,7 +54,7 @@ export const BookingList: React.FC<BookingListProps> = ({
           <IconSymbol
             name="exclamationmark.triangle"
             size={40}
-            color={textColor}
+            color="#11181C"
           />
           <Text className="text-lg text-gray-500 mt-4">No bookings found.</Text>
         </View>

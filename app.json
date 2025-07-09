@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "hotel-oms-app",
+    "name": "TigerTrip Manager",
     "slug": "hotel-oms-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/appIcon/app_icon.png",
+    "icon": "./assets/images/tigertrip_icon.png",
     "scheme": "com.chatchefs.hoteloms",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -17,7 +17,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/appIcon/app_icon.png",
+        "foregroundImage": "./assets/images/tigertrip_icon.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
@@ -35,14 +35,14 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/appIcon/app_icon.png"
+      "favicon": "./assets/images/tigertrip_icon.png"
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/appIcon/app_icon.png",
+          "image": "./assets/images/tigertrip_icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
@@ -62,6 +62,7 @@
     },
     "runtimeVersion": {
       "policy": "appVersion"
-    }
+    },
+    "owner": "nazmul1140"
   }
 }

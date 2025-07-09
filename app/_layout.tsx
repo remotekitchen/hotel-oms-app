@@ -8,15 +8,12 @@ import { store } from "@/redux/store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFonts } from "expo-font";
 import { StatusBar } from "expo-status-bar";
-import { NativeBaseProvider, extendTheme } from "native-base";
+import { NativeBaseProvider } from "native-base";
 import { useEffect } from "react";
 import "react-native-reanimated";
 import Toast from "react-native-toast-message";
 import { Provider, useDispatch, useSelector } from "react-redux";
 import "../global.css";
-
-// Optional: basic NativeBase theme (can remove or customize later)
-const theme = extendTheme({});
 
 function AuthGate() {
   const token = useSelector(selectToken);
@@ -47,9 +44,10 @@ export default function RootLayout() {
   }
 
   return (
-    <NativeBaseProvider theme={theme}>
+    <NativeBaseProvider>
       <Provider store={store}>
-        <StatusBar style="auto" translucent />
+        {/* Set StatusBar to always light mode */}
+        <StatusBar style="dark" backgroundColor="#fff" translucent />
         <AuthGate />
         <Toast />
       </Provider>
